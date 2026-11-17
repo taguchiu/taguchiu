@@ -1,5 +1,5 @@
 ### Hi there 👋
 
-![GitHub Stats Card](https://github-readme-stats.vercel.app/api?username=taguchiu&count_private=true&show_icons=true)
+![GitHub Stats Card](./profile/stats.svg)
 
-[![GitHub Streak](http://github-readme-streak-stats.herokuapp.com?user=taguchiu&date_format=%5BY.%5Dn.j)](https://git.io/streak-stats)
+[![GitHub Streak](https://streak-stats.demolab.com?user=taguchiu&date_format=%5BY.%5Dn.j)](https://github.com/DenverCoder1/github-readme-streak-stats)
