@@ -2,7 +2,7 @@ name: Update README cards
 
 on:
   schedule:
-    - cron: "0 18 * * *" # 毎日 03:00 JST
+    - cron: "17 18 * * *" # 毎日 03:17 JST（混雑する毎時0分を避ける）
   workflow_dispatch:
   push:
     branches: [main]
@@ -18,12 +18,26 @@ concurrency:
 
 jobs:
   build:
+    # main 以外から手動実行しても、そのブランチにカードを push しない
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Report token mode
+        env:
+          HAS_PAT: ${{ secrets.STATS_TOKEN != '' }}
+        run: |
+          if [ "$HAS_PAT" = "true" ]; then
+            msg="STATS_TOKEN を使用（スコープが足りていればプライベート分も集計）"
+          else
+            msg="STATS_TOKEN 未登録のため GITHUB_TOKEN を使用（公開リポジトリのみ集計）"
+          fi
+          echo "::notice::$msg"
+          echo "$msg" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Generate stats card
-        uses: stats-organization/github-readme-stats-action@v2
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
         with:
           card: stats
           options: username=${{ github.repository_owner }}&show_icons=true
@@ -31,13 +45,24 @@ jobs:
           # プライベートリポジトリの統計も含める場合は、repo / read:user スコープの
           # PAT を STATS_TOKEN という名前で Secrets に登録する（未登録なら公開分のみ）
           token: ${{ secrets.STATS_TOKEN || secrets.GITHUB_TOKEN }}
+          # 実行のたびに最新の 2.x を取得しないよう固定する
+          core_version: 2.3.1
           # 取得失敗時にエラーカードで上書きしない
           fail_on_error: true
+
+      - name: Hint on failure
+        if: failure()
+        run: echo "::error::カード生成に失敗しました。STATS_TOKEN を登録している場合は、期限切れ・失効でも「rate limiting」と表示されるため、まずトークンを確認してください。"
 
       - name: Commit cards
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add profile/*.svg
-          git commit -m "Update README cards" || exit 0
+          git add profile/stats.svg
+          if git diff --cached --quiet; then
+            echo "::notice::カードに変更なし"
+            exit 0
+          fi
+          git commit -m "Update README cards"
+          git pull --rebase origin main
           git push
