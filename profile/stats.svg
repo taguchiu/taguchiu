@@ -9,7 +9,7 @@
         aria-labelledby="descId"
       >
         <title id="titleId">taguchiu&#39;s GitHub Stats, Rank: A-</title>
-        <desc id="descId">Total Stars Earned: 4, Total Commits  : 8801, Total PRs: 2935, Total Issues: 1315, Contributed to (last year): 55</desc>
+        <desc id="descId">Total Stars Earned: 4, Total Commits  : 8806, Total PRs: 2937, Total Issues: 1315, Contributed to (last year): 55</desc>
         <style>
           .header {
             font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
@@ -73,7 +73,7 @@
         stroke-dashoffset: 251.32741228718345;
       }
       to {
-        stroke-dashoffset: 93.77483308102161;
+        stroke-dashoffset: 93.7745081682931;
       }
     }
   
